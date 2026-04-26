@@ -1,20 +1,23 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
+import React from 'react';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+
+import AccueilScreen from './screens/AccueilScreen';
+import FormulaireScreen from './screens/FormulaireScreen';
+import DetailScreen from './screens/DetailScreen';
+import FavorisScreen from './screens/FavorisScreen';
+
+const Stack = createNativeStackNavigator();
 
 export default function App() {
   return (
-    <View style={styles.container}>
-      <Text>Open up App.js to start working on your app!</Text>
-      <StatusBar style="auto" />
-    </View>
+    <NavigationContainer>
+      <Stack.Navigator initialRouteName="Accueil">
+        <Stack.Screen name="Accueil" component={AccueilScreen} options={{ title: '📚 Ma Bibliothèque' }} />
+        <Stack.Screen name="Formulaire" component={FormulaireScreen} options={{ title: 'Ajouter / Modifier' }} />
+        <Stack.Screen name="Detail" component={DetailScreen} options={{ title: 'Détails du livre' }} />
+        <Stack.Screen name="Favoris" component={FavorisScreen} options={{ title: '⭐ Mes Favoris' }} />
+      </Stack.Navigator>
+    </NavigationContainer>
   );
 }
-
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-});
