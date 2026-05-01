@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, Image, ScrollView, StyleSheet, Alert } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
-import { supprimerLivre, toggleFavori } from '../database';
+import { supprimerLivre, toggleFavori, mettreAJourPhoto } from '../database';
 
 export default function DetailScreen({ route, navigation }) {
   const [livre, setLivre] = useState(route.params.livre);
-  const [photo, setPhoto] = useState(null);
+  // Initialise la photo depuis la DB (livre.photo) au lieu de null
+  const [photo, setPhoto] = useState(livre.photo || null);
 
   function etoiles(note) { return '★'.repeat(note) + '☆'.repeat(5 - note); }
 
   function confirmerSuppression() {
     Alert.alert('Supprimer', 'Voulez-vous vraiment supprimer ce livre ?', [
       { text: 'Annuler', style: 'cancel' },
-      { text: 'Supprimer', style: 'destructive', onPress: async () => { await supprimerLivre(livre.id); navigation.navigate('Accueil'); } },
+      {
+        text: 'Supprimer', style: 'destructive',
+        onPress: async () => { await supprimerLivre(livre.id); navigation.navigate('Accueil'); }
+      },
     ]);
   }
 
@@ -21,24 +25,39 @@ export default function DetailScreen({ route, navigation }) {
     setLivre({ ...livre, favori: livre.favori === 1 ? 0 : 1 });
   }
 
+  // Sauvegarde la photo en DB et met à jour l'état local
+  async function sauvegarderPhoto(uri) {
+    setPhoto(uri);
+    setLivre({ ...livre, photo: uri });
+    await mettreAJourPhoto(livre.id, uri);
+  }
+
   async function prendrePhoto() {
     const permission = await ImagePicker.requestCameraPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Permission refusée', "L'accès à la caméra est nécessaire."); return; }
+    if (!permission.granted) {
+      Alert.alert('Permission refusée', "L'accès à la caméra est nécessaire.");
+      return;
+    }
     const result = await ImagePicker.launchCameraAsync({ allowsEditing: true, aspect: [2, 3], quality: 0.7 });
-    if (!result.canceled) setPhoto(result.assets[0].uri);
+    if (!result.canceled) await sauvegarderPhoto(result.assets[0].uri);
   }
 
   async function choisirDepuisGalerie() {
     const permission = await ImagePicker.requestMediaLibraryPermissionsAsync();
-    if (!permission.granted) { Alert.alert('Permission refusée', "L'accès à la galerie est nécessaire."); return; }
+    if (!permission.granted) {
+      Alert.alert('Permission refusée', "L'accès à la galerie est nécessaire.");
+      return;
+    }
     const result = await ImagePicker.launchImageLibraryAsync({ allowsEditing: true, aspect: [2, 3], quality: 0.7 });
-    if (!result.canceled) setPhoto(result.assets[0].uri);
+    if (!result.canceled) await sauvegarderPhoto(result.assets[0].uri);
   }
 
   return (
     <ScrollView style={styles.container}>
       <View style={styles.couvertureZone}>
-        {photo ? <Image source={{ uri: photo }} style={styles.couverture} /> : (
+        {photo ? (
+          <Image source={{ uri: photo }} style={styles.couverture} />
+        ) : (
           <View style={styles.couverturePlaceholder}>
             <Text style={styles.couverturePlaceholderTexte}>📚</Text>
             <Text style={{ color: '#999', fontSize: 12 }}>Pas de couverture</Text>
@@ -59,18 +78,28 @@ export default function DetailScreen({ route, navigation }) {
         <Text style={styles.auteur}>par {livre.auteur}</Text>
         <View style={styles.rangee}>
           <Text style={styles.etoiles}>{etoiles(livre.note)}</Text>
-          <Text style={[styles.badge, livre.lu ? styles.lu : styles.nonLu]}>{livre.lu ? '✅ Lu' : '📖 Non lu'}</Text>
+          <Text style={[styles.badge, livre.lu ? styles.lu : styles.nonLu]}>
+            {livre.lu ? '✅ Lu' : '📖 Non lu'}
+          </Text>
         </View>
-        {livre.genre ? <Ligne label="Genre" valeur={livre.genre} /> : null}
-        {livre.nb_pages ? <Ligne label="Pages" valeur={livre.nb_pages} /> : null}
+        {livre.genre     ? <Ligne label="Genre"          valeur={livre.genre} /> : null}
+        {livre.nb_pages  ? <Ligne label="Pages"          valeur={livre.nb_pages} /> : null}
         {livre.date_lecture ? <Ligne label="Date de lecture" valeur={livre.date_lecture} /> : null}
       </View>
 
       <View style={styles.actions}>
-        <TouchableOpacity style={[styles.bouton, livre.favori === 1 ? styles.boutonFavoriActif : styles.boutonFavori]} onPress={basculerFavori}>
-          <Text style={styles.boutonTexte}>{livre.favori === 1 ? '⭐ Retirer des favoris' : '☆ Ajouter aux favoris'}</Text>
+        <TouchableOpacity
+          style={[styles.bouton, livre.favori === 1 ? styles.boutonFavoriActif : styles.boutonFavori]}
+          onPress={basculerFavori}
+        >
+          <Text style={styles.boutonTexte}>
+            {livre.favori === 1 ? '⭐ Retirer des favoris' : '☆ Ajouter aux favoris'}
+          </Text>
         </TouchableOpacity>
-        <TouchableOpacity style={[styles.bouton, styles.boutonModifier]} onPress={() => navigation.navigate('Formulaire', { livre })}>
+        <TouchableOpacity
+          style={[styles.bouton, styles.boutonModifier]}
+          onPress={() => navigation.navigate('Formulaire', { livre })}
+        >
           <Text style={styles.boutonTexte}>✏️ Modifier</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.bouton, styles.boutonSupprimer]} onPress={confirmerSuppression}>

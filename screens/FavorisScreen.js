@@ -24,16 +24,24 @@ export default function FavorisScreen({ navigation }) {
 
   function CarteFavori({ item }) {
     return (
-      <TouchableOpacity style={styles.carte} onPress={() => navigation.navigate('Detail', { livre: item })}>
-        <View style={styles.carteInfo}>
+      // View au lieu de TouchableOpacity pour éviter le conflit d'événements
+      <View style={styles.carte}>
+        <TouchableOpacity
+          style={styles.carteInfo}
+          onPress={() => navigation.navigate('Detail', { livre: item })}
+        >
           <Text style={styles.titre}>{item.titre}</Text>
           <Text style={styles.auteur}>{item.auteur}</Text>
           <Text style={styles.etoiles}>{etoiles(item.note)}</Text>
-        </View>
-        <TouchableOpacity style={styles.boutonRetirer} onPress={() => retirerFavori(item.id)}>
+        </TouchableOpacity>
+        {/* Bouton séparé : n'hérite plus des événements du parent */}
+        <TouchableOpacity
+          style={styles.boutonRetirer}
+          onPress={() => retirerFavori(item.id)}
+        >
           <Text style={styles.boutonRetirerTexte}>Retirer ⭐</Text>
         </TouchableOpacity>
-      </TouchableOpacity>
+      </View>
     );
   }
 
@@ -43,10 +51,16 @@ export default function FavorisScreen({ navigation }) {
         <View style={styles.vide}>
           <Text style={styles.videEmoji}>⭐</Text>
           <Text style={styles.videTexte}>Aucun favori pour l'instant.</Text>
-          <Text style={styles.videIndication}>Ouvrez la fiche d'un livre pour l'ajouter aux favoris.</Text>
+          <Text style={styles.videIndication}>
+            Ouvrez la fiche d'un livre pour l'ajouter aux favoris.
+          </Text>
         </View>
       ) : (
-        <FlatList data={favoris} keyExtractor={(item) => item.id.toString()} renderItem={({ item }) => <CarteFavori item={item} />} />
+        <FlatList
+          data={favoris}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => <CarteFavori item={item} />}
+        />
       )}
     </View>
   );
@@ -54,12 +68,29 @@ export default function FavorisScreen({ navigation }) {
 
 const styles = StyleSheet.create({
   container: { flex: 1, backgroundColor: '#f5f5f5', padding: 12 },
-  carte: { backgroundColor: '#fff', borderRadius: 10, padding: 12, marginBottom: 10, flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', elevation: 2 },
+  carte: {
+    backgroundColor: '#fff',
+    borderRadius: 10,
+    padding: 12,
+    marginBottom: 10,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    elevation: 2,
+  },
   carteInfo: { flex: 1 },
   titre: { fontSize: 16, fontWeight: 'bold', color: '#333' },
   auteur: { fontSize: 13, color: '#666', marginTop: 2 },
   etoiles: { fontSize: 14, color: '#f4a41b', marginTop: 4 },
-  boutonRetirer: { backgroundColor: '#fff3cd', paddingHorizontal: 10, paddingVertical: 6, borderRadius: 8, borderWidth: 1, borderColor: '#ffc107', marginLeft: 8 },
+  boutonRetirer: {
+    backgroundColor: '#fff3cd',
+    paddingHorizontal: 10,
+    paddingVertical: 6,
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#ffc107',
+    marginLeft: 8,
+  },
   boutonRetirerTexte: { color: '#856404', fontSize: 12, fontWeight: '600' },
   vide: { flex: 1, alignItems: 'center', justifyContent: 'center' },
   videEmoji: { fontSize: 60, marginBottom: 12 },
