@@ -12,7 +12,6 @@ Application mobile de gestion de bibliothèque personnelle, développée avec **
 - **Tri** par date d'ajout, titre, note ou date de lecture
 - **Photo de couverture** depuis la caméra ou la galerie
 - **Favoris** avec écran dédié et recherche intégrée
-- **Statistiques** : total, lus/non lus, note moyenne, top genres
 - **Validation** des champs (titre obligatoire, auteur obligatoire, format date JJ/MM/AAAA, nb de pages positif)
 - **Confirmation** avant de quitter un formulaire avec des données non sauvegardées
 - **Persistance locale** via SQLite (fonctionne sans connexion internet)
@@ -31,8 +30,7 @@ BiblioApp/
 │   ├── AccueilScreen.js        # Liste des livres + filtres + tri
 │   ├── DetailScreen.js         # Fiche détaillée d'un livre
 │   ├── FormulaireScreen.js     # Ajout et modification d'un livre
-│   ├── FavorisScreen.js        # Liste des favoris avec recherche
-│   └── StatsScreen.js          # Statistiques de la bibliothèque
+│   └── FavorisScreen.js        # Liste des favoris avec recherche
 ├── assets/                     # Icônes et images de l'application
 ├── app.json                    # Configuration Expo
 └── package.json
@@ -107,7 +105,6 @@ La base de données SQLite est initialisée **une seule fois** au démarrage de 
 | `getLivreById(id)` | Récupère un livre par son ID |
 | `getFavoris(recherche)` | Récupère les livres favoris |
 | `getGenres()` | Récupère la liste des genres distincts |
-| `getStats()` | Calcule les statistiques globales |
 | `ajouterLivre(livre)` | Insère un nouveau livre |
 | `modifierLivre(livre)` | Met à jour un livre existant |
 | `supprimerLivre(id)` | Supprime un livre |
@@ -123,9 +120,8 @@ Accueil (Ma Bibliothèque)
 ├── Formulaire (Ajouter un livre)
 ├── Detail (Détails du livre)
 │   └── Formulaire (Modifier le livre)
-├── Favoris (Mes Favoris)
-│   └── Detail (Détails du livre)
-└── Stats (Statistiques)
+└── Favoris (Mes Favoris)
+    └── Detail (Détails du livre)
 ```
 
 ---
