@@ -10,7 +10,6 @@ import AccueilScreen    from './screens/AccueilScreen';
 import FormulaireScreen from './screens/FormulaireScreen';
 import DetailScreen     from './screens/DetailScreen';
 import FavorisScreen    from './screens/FavorisScreen';
-import StatsScreen      from './screens/StatsScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -57,7 +56,6 @@ export default function App() {
         <Stack.Screen name="Formulaire" component={FormulaireScreen} options={({ route }) => ({ title: route.params?.livre ? 'Modifier le livre' : 'Ajouter un livre' })} />
         <Stack.Screen name="Detail"     component={DetailScreen}     options={{ title: 'Détails du livre' }} />
         <Stack.Screen name="Favoris"    component={FavorisScreen}    options={{ title: 'Mes Favoris' }} />
-        <Stack.Screen name="Stats"      component={StatsScreen}      options={{ title: 'Statistiques' }} />
       </Stack.Navigator>
     </NavigationContainer>
   );

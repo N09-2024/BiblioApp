@@ -10,7 +10,7 @@ import { Colors, Radius, Shadow } from '../theme';
 
 const TRIS = [
   { label: 'Plus récent',    value: 'id_desc'   },
-  { label: 'Titre A → Z',   value: 'titre_asc'  },
+  { label: 'Titre A à Z',   value: 'titre_asc'  },
   { label: 'Meilleure note', value: 'note_desc'  },
   { label: 'Date de lecture',value: 'date_desc'  },
 ];
@@ -87,9 +87,6 @@ export default function AccueilScreen({ navigation }) {
             </TouchableOpacity>
           )}
         </View>
-        <TouchableOpacity style={styles.btnIcone} onPress={() => navigation.navigate('Stats')}>
-          <Ionicons name="bar-chart-outline" size={20} color={Colors.primary} />
-        </TouchableOpacity>
         <TouchableOpacity style={styles.btnIcone} onPress={() => navigation.navigate('Favoris')}>
           <Ionicons name="star-outline" size={20} color={Colors.primary} />
         </TouchableOpacity>

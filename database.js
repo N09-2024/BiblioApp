@@ -29,7 +29,6 @@ export async function initDB() {
   // Migrations pour installations existantes (ignorées si colonne déjà présente)
   for (const sql of [
     `ALTER TABLE livres ADD COLUMN photo TEXT;`,
-    `ALTER TABLE livres ADD COLUMN description TEXT DEFAULT '';`,
   ]) {
     try { await db.execAsync(sql); } catch (_) {}
   }
